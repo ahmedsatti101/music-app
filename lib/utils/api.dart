@@ -10,8 +10,7 @@ const redirectUri = 'http://10.0.2.2:3000';
 Future<String> requestAuth() async {
   var code = '';
 
-  final url = 
-      'https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri';
+  const url = 'https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri';
   http.Response response = await http.get(url);
 
   if (response.statusCode == 200) {
