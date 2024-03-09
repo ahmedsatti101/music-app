@@ -3,6 +3,7 @@ import 'package:demo_music_app/presentation/widgets/searchBar.dart' as SearchBar
 
 void main() {
   runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
 }
 
 class MyApp extends StatelessWidget {

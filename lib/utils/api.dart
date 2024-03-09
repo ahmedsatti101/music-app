@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:demo_music_app/utils/factory_utils/utils.dart' as util;
@@ -7,14 +8,15 @@ const clientId = '9f080e9d211848d09176ea3ce1f58d93';
 const clientSecret = '9615898eb16e4868aced50515d772344';
 const redirectUri = 'http://10.0.2.2:3000';
 
-Future<String> requestAuth() async {
-  var code = '';
-
-  const url = 'https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri';
-  http.Response response = await http.get(url);
+Future<http.Response> requestAuth() async {
+  var code;
+  final response = await http.get(
+      Uri.parse(
+          'https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri'),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'});
 
   if (response.statusCode == 200) {
-    code = response.body;
+    code = response.request!.url;
     print(code);
     return code;
   } else {
@@ -41,7 +43,7 @@ Future<String?> getAccessToken() async {
 
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = jsonDecode(response.body);
-    // print(data);
+    print(data);
     token = data['access_token'];
     return token;
   } else {

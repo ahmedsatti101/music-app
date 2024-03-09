@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:demo_music_app/main.dart' as app;
 import 'package:demo_music_app/utils/api.dart' as api;
-import 'package:demo_music_app/presentation/widgets/dropDown.dart' as dropDownButton;
+import 'package:demo_music_app/presentation/widgets/dropDown.dart'
+    as dropDownButton;
 
 class SearchBar extends StatefulWidget {
   final app.MyAppState myAppState;
@@ -12,7 +13,7 @@ class SearchBar extends StatefulWidget {
   _SearchBarState createState() => _SearchBarState();
 }
 
-class _SearchBarState extends State<SearchBar>{
+class _SearchBarState extends State<SearchBar> {
   late final TextEditingController _textEditingController;
 
   @override
@@ -43,14 +44,16 @@ class _SearchBarState extends State<SearchBar>{
             children: [
               dropDownButton.DropdownButtonExample(
                   onTypeSelected: (selectedType) {
-                    widget.myAppState.updateSearchType(selectedType);
-                  }
-              ),
+                widget.myAppState.updateSearchType(selectedType);
+              }),
               SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    final response = await api.searchApi(widget.myAppState.query, widget.myAppState.type);
+                    await api.requestAuth();
+                    await api.getAccessToken();
+                    final response = await api.searchApi(
+                        widget.myAppState.query, widget.myAppState.type);
                     print(response.body);
                   } catch (error) {
                     print(error);
