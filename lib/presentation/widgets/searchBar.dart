@@ -50,11 +50,9 @@ class _SearchBarState extends State<SearchBar> {
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    await api.requestAuth();
                     await api.getAccessToken();
-                    final response = await api.searchApi(
+                    await api.searchApi(
                         widget.myAppState.query, widget.myAppState.type);
-                    print(response.body);
                   } catch (error) {
                     print(error);
                   }

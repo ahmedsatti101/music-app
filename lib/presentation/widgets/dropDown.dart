@@ -23,7 +23,6 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
       onChanged: (String? value) {
         setState(() {
           _dropDownValue = value!;
-          // Invoke the callback if provided
           widget.onTypeSelected?.call(value);
         });
       });
