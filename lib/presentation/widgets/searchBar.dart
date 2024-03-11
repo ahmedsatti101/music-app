@@ -3,6 +3,7 @@ import 'package:demo_music_app/main.dart' as app;
 import 'package:demo_music_app/utils/api.dart' as api;
 import 'package:demo_music_app/presentation/widgets/dropDown.dart'
     as dropDownButton;
+import 'package:demo_music_app/presentation/pages/searchResults.dart' as results;
 
 class SearchBar extends StatefulWidget {
   final app.MyAppState myAppState;
@@ -53,6 +54,7 @@ class _SearchBarState extends State<SearchBar> {
                     await api.getAccessToken();
                     await api.searchApi(
                         widget.myAppState.query, widget.myAppState.type);
+                    results.SearchResults(myAppState: widget.myAppState);
                   } catch (error) {
                     print('Error: $error');
                   }
