@@ -54,7 +54,7 @@ class _SearchBarState extends State<SearchBar> {
                     await api.searchApi(
                         widget.myAppState.query, widget.myAppState.type);
                   } catch (error) {
-                    print(error);
+                    print('Error: $error');
                   }
                 },
                 child: const Text('Done'),
