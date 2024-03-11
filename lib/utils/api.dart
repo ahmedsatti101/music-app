@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:demo_music_app/utils/factory_utils/utils.dart' as util;
-import 'dart:convert' show utf8;
-
-const clientId = '9f080e9d211848d09176ea3ce1f58d93';
-const clientSecret = '9615898eb16e4868aced50515d772344';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<String?> getAccessToken() async {
+  await dotenv.load();
   var token = '';
-  var authStr = '$clientId:$clientSecret';
+  var authStr = '${dotenv.env['client_id']}:${dotenv.env['client_secret']}';
   var authBytes = utf8.encode(authStr);
   var authBase64 = base64Encode(authBytes);
 
@@ -35,7 +33,8 @@ Future<String?> getAccessToken() async {
 Future<util.SearchResults> searchApi(query, type) async {
   final accessToken = await getAccessToken();
   final response = await http.get(
-      Uri.parse('https://api.spotify.com/v1/search?query=$query&type=$type&limit=10'),
+      Uri.parse(
+          'https://api.spotify.com/v1/search?query=$query&type=$type&limit=10'),
       headers: {'Authorization': 'Bearer $accessToken'});
   final searchResults = util.SearchResults.fromJson(
       jsonDecode(response.body) as Map<String, dynamic>);
