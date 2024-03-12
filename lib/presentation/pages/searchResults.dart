@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:demo_music_app/main.dart' as app;
 import 'package:demo_music_app/utils/api.dart' as api;
-
-var artistSearchData = api.artistSearchData;
-var albumSearchData = api.albumSearchData;
-var trackSearchData = api.trackSearchData;
-var playlistSearchData = api.playlistSearchData;
+import 'package:demo_music_app/utils/factory_utils/utils.dart';
 
 class SearchResults extends StatefulWidget {
   const SearchResults({super.key, required this.myAppState});
@@ -16,48 +12,29 @@ class SearchResults extends StatefulWidget {
 }
 
 class _SearchResultsState extends State<SearchResults> {
-  // late String typeQuery;
+  late Future<List<Artists>> futureArtists;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   typeQuery = widget.myAppState.type;
-  // }
+  @override
+  void initState() {
+    super.didChangeDependencies();
+    futureArtists = ArtistService().getArtists(widget.myAppState.query);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      
+    return Scaffold(
+      body: Center(
+          child: FutureBuilder<List<Artists>>(
+        future: futureArtists,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text('Data is here!');
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          return const CircularProgressIndicator();
+        },
+      )),
     );
   }
 }
-
-    /*return ListView.builder(
-      itemCount: typeQuery == 'artist'
-          ? artistSearchData.length
-          : typeQuery == 'album'
-              ? albumSearchData.length
-              : typeQuery == 'track'
-                  ? trackSearchData.length
-                  : typeQuery == 'playlist'
-                      ? playlistSearchData.length
-                      : 0,
-      itemBuilder: (context, index) {
-        var result = typeQuery == 'artist'
-            ? artistSearchData[index]
-            : typeQuery == 'album'
-                ? albumSearchData[index]
-                : typeQuery == 'track'
-                    ? trackSearchData[index]
-                    : typeQuery == 'playlist'
-                        ? playlistSearchData[index]
-                        : 0;
-        return Card(
-          child: ListTile(
-            leading: Image.network(result.artCoverUrl),
-            title: Text(result.name),
-            // subtitle: Text(result.owner),
-          ),
-        );
-      },
-    );*/

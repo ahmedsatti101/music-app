@@ -3,7 +3,8 @@ import 'package:demo_music_app/main.dart' as app;
 import 'package:demo_music_app/utils/api.dart' as api;
 import 'package:demo_music_app/presentation/widgets/dropDown.dart'
     as dropDownButton;
-import 'package:demo_music_app/presentation/pages/searchResults.dart' as results;
+import 'package:demo_music_app/presentation/pages/searchResults.dart'
+    as results;
 
 class SearchBar extends StatefulWidget {
   final app.MyAppState myAppState;
@@ -38,7 +39,7 @@ class _SearchBarState extends State<SearchBar> {
                 onChanged: (value) {
                   widget.myAppState.updateSearchTerm(value);
                 },
-                decoration: const InputDecoration(labelText: 'Search'),
+                decoration: const InputDecoration(labelText: 'Search', prefixIcon: Icon(Icons.search)),
               )),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -51,10 +52,7 @@ class _SearchBarState extends State<SearchBar> {
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    await api.getAccessToken();
-                    await api.searchApi(
-                        widget.myAppState.query, widget.myAppState.type);
-                    results.SearchResults(myAppState: widget.myAppState);
+                    results.SearchResults(myAppState: app.MyAppState());
                   } catch (error) {
                     print('Error: $error');
                   }

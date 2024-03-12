@@ -1,45 +1,36 @@
-class SearchResults {
-  Null query;
-  Null type;
+import 'dart:convert';
+import 'package:demo_music_app/utils/api.dart';
+import 'package:http/http.dart' as http;
 
-  SearchResults({required this.query, required this.type});
+class Artists {
+  final String name;
+  final List images;
 
-  factory SearchResults.fromJson(Map<String, dynamic> json) {
-    return SearchResults(
-      query: json['query'],
-      type: json['type'],
-    );
+  const Artists({required this.name, required this.images});
+
+  factory Artists.fromJson(Map<String, dynamic> json) {
+    return Artists(name: json['name'], images: json['images']);
   }
 }
 
-class Artist {
-  final int followers;
-  final String name;
-  final String href;
-  final List images;
+class ArtistService {
+  Future<List<Artists>> getArtists(query) async {
+    var accessToken = await getAccessToken();
+    final response = await http.get(
+        Uri.parse('https://api.spotify.com/v1/search?query=$query&type=artist'),
+        headers: {'Authorization': 'Bearer $accessToken'});
 
-  const Artist({
-    required this.followers,
-    required this.name,
-    required this.href,
-    required this.images
-  });
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final List<Artists> list = [];
 
-  factory Artist.fromJson(Map<String, dynamic> json) {
-    return switch (json) {
-      {
-        'followers': int followers,
-        'name': String name,
-        'href': String href,
-        'images': List images,
-      } =>
-        Artist(
-          followers: followers,
-          name: name,
-          href: href,
-          images: images
-        ),
-      _ => throw const FormatException('Failed to load album.'),
-    };
+      for (var i = 0; i < data['artists']['items'].length; i++) {
+        final entry = data['artists']['items'][i];
+        list.add(Artists.fromJson(entry));
+      }
+      return list;
+    } else {
+      throw Exception('HTTP failed :(');
+    }
   }
 }
