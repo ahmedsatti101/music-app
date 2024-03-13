@@ -1,10 +1,8 @@
+import 'package:demo_music_app/utils/factory_utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:demo_music_app/main.dart' as app;
-import 'package:demo_music_app/utils/api.dart' as api;
 import 'package:demo_music_app/presentation/widgets/dropDown.dart'
     as dropDownButton;
-import 'package:demo_music_app/presentation/pages/searchResults.dart'
-    as results;
 
 class SearchBar extends StatefulWidget {
   final app.MyAppState myAppState;
@@ -17,11 +15,12 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   late final TextEditingController _textEditingController;
-
+  late final Future<List> futureResults;
   @override
   void initState() {
     super.initState();
     _textEditingController = TextEditingController();
+    futureResults = SearchService().getResults('tool', 'artist');
   }
 
   @override
@@ -39,7 +38,8 @@ class _SearchBarState extends State<SearchBar> {
                 onChanged: (value) {
                   widget.myAppState.updateSearchTerm(value);
                 },
-                decoration: const InputDecoration(labelText: 'Search', prefixIcon: Icon(Icons.search)),
+                decoration: const InputDecoration(
+                    labelText: 'Search', prefixIcon: Icon(Icons.search)),
               )),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -50,17 +50,25 @@ class _SearchBarState extends State<SearchBar> {
               }),
               SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () async {
-                  try {
-                    results.SearchResults(myAppState: app.MyAppState());
-                  } catch (error) {
-                    print('Error: $error');
-                  }
+                onPressed: () {
+                  SearchService().getResults(
+                      widget.myAppState.query, widget.myAppState.type);
                 },
                 child: const Text('Done'),
               ),
             ],
           ),
+          FutureBuilder<List>(
+              future: futureResults,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text('Data is here!');
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+
+                return const CircularProgressIndicator();
+              })
         ],
       ),
     );
