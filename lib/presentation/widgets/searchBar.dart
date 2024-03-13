@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:demo_music_app/utils/factory_utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:demo_music_app/main.dart' as app;
 import 'package:demo_music_app/presentation/widgets/dropDown.dart'
     as dropDownButton;
+import 'package:demo_music_app/presentation/pages/detailsPage.dart';
 
 class SearchBar extends StatefulWidget {
   final app.MyAppState myAppState;
@@ -15,12 +17,12 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   late final TextEditingController _textEditingController;
-  late final Future<List> futureResults;
+  Future<List> futureResults = Future.value([]);
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     _textEditingController = TextEditingController();
-    futureResults = SearchService().getResults('tool', 'artist');
   }
 
   @override
@@ -35,8 +37,13 @@ class _SearchBarState extends State<SearchBar> {
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
                 controller: _textEditingController,
-                onChanged: (value) {
-                  widget.myAppState.updateSearchTerm(value);
+                onFieldSubmitted: (value) async {
+                  print(value);
+                  print(widget.myAppState.type);
+                  setState(() {
+                    futureResults = SearchService()
+                        .getResults(value, widget.myAppState.type);
+                  });
                 },
                 decoration: const InputDecoration(
                     labelText: 'Search', prefixIcon: Icon(Icons.search)),
@@ -51,26 +58,50 @@ class _SearchBarState extends State<SearchBar> {
               SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () {
-                  SearchService().getResults(
-                      widget.myAppState.query, widget.myAppState.type);
+                  setState(() {
+                    futureResults = SearchService().getResults(
+                        _textEditingController.text, widget.myAppState.type);
+                  });
                 },
                 child: const Text('Done'),
               ),
             ],
           ),
-          FutureBuilder<List>(
+          Expanded(
+            child: FutureBuilder<List>(
               future: futureResults,
-              builder: (context, snapshot) {
+              builder: (context, AsyncSnapshot<List> snapshot) {
                 if (snapshot.hasData) {
-                  return Text('Data is here!');
+                  return ListView.separated(
+                    itemBuilder: (context, index) {
+                      var content = snapshot.data![index];
+                      return ListTile(
+                        title: Text(content.name),
+                        trailing: const Icon(Icons.chevron_right_outlined),
+                        subtitle: Text(content.type),
+                        onTap: (() => {detailPage(context, futureResults)}),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider(color: Colors.black26);
+                    },
+                    itemCount: snapshot.data!.length,
+                  );
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
 
                 return const CircularProgressIndicator();
-              })
+              },
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  detailPage(context, Future<List> futureResults) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => DetailsPage(futureResults: futureResults)));
   }
 }
