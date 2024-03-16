@@ -19,42 +19,42 @@ class Albums {
   final List images;
   final String name;
   final String type;
-  final String artistName;
+  final String artist;
 
   const Albums(
       {required this.images,
       required this.name,
       required this.type,
-      required this.artistName});
+      required this.artist});
 
   factory Albums.fromJson(Map<String, dynamic> json) {
     return Albums(
         images: json['images'],
         name: json['name'],
         type: json['type'],
-        artistName: json['name']);
+        artist: json['artist']);
   }
 }
 
 class Tracks {
   final String name;
   final String type;
-  // final String artistName;
+  final String artist;
   // final List images;
 
-  const Tracks({
-    // required this.images,
-    required this.name,
-    required this.type,
-    /*required this.artistName*/
-  });
+  const Tracks(
+      {
+      // required this.images,
+      required this.name,
+      required this.type,
+      required this.artist});
 
   factory Tracks.fromJson(Map<String, dynamic> json) {
     return Tracks(
-      // images: json['images'],
-      name: json['name'],
-      type: json['type'], /*artistName: json['name']*/
-    );
+        // images: json['images'],
+        name: json['name'],
+        type: json['type'],
+        artist: json['artist']);
   }
 }
 
@@ -62,22 +62,21 @@ class Playlists {
   final String name;
   final String type;
   // final List images;
-  // final String displayName;
+  final String creator;
 
-  const Playlists({
+  const Playlists(
+      {
       // required this.images,
       required this.name,
       required this.type,
-      // required this.displayName
-      });
+      required this.creator});
 
   factory Playlists.fromJson(Map<String, dynamic> json) {
     return Playlists(
         // images: json['images'],
         name: json['name'],
         type: json['type'],
-        // displayName: json['display_name']
-        );
+        creator: json['creator']);
   }
 }
 
@@ -94,6 +93,7 @@ class SearchService {
 
       for (var i = 0; i < data['artists']['items'].length; i++) {
         final entry = data['artists']['items'][i];
+        entry['type'] = 'Artist';
         list.add(Artists.fromJson(entry));
       }
       return list;
@@ -102,6 +102,14 @@ class SearchService {
 
       for (var i = 0; i < data['albums']['items'].length; i++) {
         final entry = data['albums']['items'][i];
+        final artistInfo = entry['artists'];
+        var artist;
+
+        for (var j = 0; j < artistInfo.length; j++) {
+          artist = artistInfo[j]['name'];
+        }
+        entry['artist'] = artist;
+        entry['type'] = 'Album';
         list.add(Albums.fromJson(entry));
       }
       return list;
@@ -110,6 +118,15 @@ class SearchService {
 
       for (var i = 0; i < data['tracks']['items'].length; i++) {
         final entry = data['tracks']['items'][i];
+        final artistInfo = entry['artists'];
+        var artist;
+
+        for (var j = 0; j < artistInfo.length; j++) {
+          artist = artistInfo[j]['name'];
+        }
+
+        entry['artist'] = artist;
+        entry['type'] = 'Song';
         list.add(Tracks.fromJson(entry));
       }
       return list;
@@ -118,6 +135,8 @@ class SearchService {
 
       for (var i = 0; i < data['playlists']['items'].length; i++) {
         final entry = data['playlists']['items'][i];
+        entry['creator'] = entry['owner']['display_name'];
+        entry['type'] = 'Playlist';
         list.add(Playlists.fromJson(entry));
       }
       return list;

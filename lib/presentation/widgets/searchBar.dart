@@ -9,7 +9,7 @@ import 'package:demo_music_app/presentation/pages/detailsPage.dart';
 class SearchBar extends StatefulWidget {
   final app.MyAppState myAppState;
 
-  const SearchBar({Key? key, required this.myAppState}) : super(key: key);
+  const SearchBar({super.key, required this.myAppState});
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -38,8 +38,6 @@ class _SearchBarState extends State<SearchBar> {
               child: TextFormField(
                 controller: _textEditingController,
                 onFieldSubmitted: (value) async {
-                  print(value);
-                  print(widget.myAppState.type);
                   setState(() {
                     futureResults = SearchService()
                         .getResults(value, widget.myAppState.type);
@@ -55,7 +53,7 @@ class _SearchBarState extends State<SearchBar> {
                   onTypeSelected: (selectedType) {
                 widget.myAppState.updateSearchType(selectedType);
               }),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -79,7 +77,16 @@ class _SearchBarState extends State<SearchBar> {
                         title: Text(content.name),
                         trailing: const Icon(Icons.chevron_right_outlined),
                         subtitle: Text(content.type),
-                        onTap: (() => {detailPage(context, futureResults)}),
+                        // subtitle: Text(content.artist != null ? '${content.type} * ${content.artist}' : content.creator != null ? '${content.type} * Owner: ${content.creator}': content.type),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailsPage(selectedItem: content),
+                            ),
+                          );
+                        },
                       );
                     },
                     separatorBuilder: (context, index) {
@@ -100,8 +107,10 @@ class _SearchBarState extends State<SearchBar> {
     );
   }
 
-  detailPage(context, Future<List> futureResults) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => DetailsPage(futureResults: futureResults)));
-  }
+  // detailPage(context, Future<List> futureResults) {
+  //   Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //           builder: (context) => DetailsPage(futureResults: futureResults)));
+  // }
 }

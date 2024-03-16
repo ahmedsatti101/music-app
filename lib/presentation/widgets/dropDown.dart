@@ -16,7 +16,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
       items: const [
         DropdownMenuItem(value: 'artist', child: Text('Artist')),
         DropdownMenuItem(value: 'album', child: Text('Album')),
-        DropdownMenuItem(value: 'track', child: Text('Track')),
+        DropdownMenuItem(value: 'track', child: Text('Song')),
         DropdownMenuItem(value: 'playlist', child: Text('Playlist')),
       ],
       value: _dropDownValue,

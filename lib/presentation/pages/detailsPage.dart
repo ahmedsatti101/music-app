@@ -1,3 +1,4 @@
+import 'package:demo_music_app/presentation/widgets/title_section.dart';
 import 'package:flutter/material.dart';
 
 class ImageSection extends StatelessWidget {
@@ -17,34 +18,24 @@ class ImageSection extends StatelessWidget {
 }
 
 class DetailsPage extends StatelessWidget {
-  Future<List> futureResults = Future.value([]);
+  final dynamic selectedItem;
 
-  DetailsPage({super.key, required this.futureResults});
+  DetailsPage({super.key, required this.selectedItem});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Details')),
-      body: Column(
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FutureBuilder<List>(
-                future: futureResults,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return const Text('We have data');
-                  } else if (snapshot.hasError) {
-                    return const Text('failed');
-                  }
-
-                  return const CircularProgressIndicator();
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            TitleSection(title: selectedItem.name),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
                 },
-              )
-            ],
-          )
-        ],
+                child: const Text('Back'))
+          ],
+        ),
       ),
     );
   }
