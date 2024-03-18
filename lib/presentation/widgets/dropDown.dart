@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class DropdownButtonExample extends StatefulWidget {
   final void Function(String selectedType)? onTypeSelected;
-  const DropdownButtonExample({Key? key, this.onTypeSelected}) : super(key: key);
+  const DropdownButtonExample({super.key, this.onTypeSelected});
 
   @override
   State<DropdownButtonExample> createState() => _DropdownButtonExampleState();

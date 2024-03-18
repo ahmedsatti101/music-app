@@ -18,7 +18,6 @@ class SearchBar extends StatefulWidget {
 class _SearchBarState extends State<SearchBar> {
   late final TextEditingController _textEditingController;
   Future<List> futureResults = Future.value([]);
-  bool isLoading = true;
   @override
   void initState() {
     super.initState();
@@ -95,7 +94,7 @@ class _SearchBarState extends State<SearchBar> {
                     itemCount: snapshot.data!.length,
                   );
                 } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  return Text('${snapshot.error}');
                 }
 
                 return const CircularProgressIndicator();
@@ -106,11 +105,4 @@ class _SearchBarState extends State<SearchBar> {
       ),
     );
   }
-
-  // detailPage(context, Future<List> futureResults) {
-  //   Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //           builder: (context) => DetailsPage(futureResults: futureResults)));
-  // }
 }
