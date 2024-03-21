@@ -95,6 +95,33 @@ class Playlists {
   }
 }
 
+class ArtistAlbums {
+  final String type;
+  final int totalTracks;
+  final String id;
+  final String name;
+  final String releaseDate;
+  final String artist;
+
+  const ArtistAlbums(
+      {required this.artist,
+      required this.totalTracks,
+      required this.id,
+      required this.name,
+      required this.releaseDate,
+      required this.type});
+
+  factory ArtistAlbums.fromJson(Map<String, dynamic> json) {
+    return ArtistAlbums(
+        artist: json['artist'],
+        totalTracks: json['total_tracks'],
+        id: json['id'],
+        name: json['name'],
+        releaseDate: json['release_date'],
+        type: json['type']);
+  }
+}
+
 class SearchService {
   Future<List> getResults(query, type) async {
     var accessToken = await getAccessToken();
@@ -188,6 +215,30 @@ class SearchService {
       return list;
     } else {
       throw Exception('Something went wrong!');
+    }
+  }
+}
+
+class AlbumsService {
+  Future<List> getAlbums(id) async {
+    var accessToken = await getAccessToken();
+    final response = await http.get(
+        Uri.parse('https://api.spotify.com/v1/artists/$id/albums'),
+        headers: {'Authorization': 'Bearer $accessToken'});
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      final List<ArtistAlbums> list = [];
+
+      for (var i = 0; i < data['items'].length; i++) {
+        final entry = data['items'][i];
+        print(entry);
+        list.add(ArtistAlbums.fromJson(entry));
+      }
+      return list;
+    } else {
+      throw Exception('Error in utils.dart');
     }
   }
 }
