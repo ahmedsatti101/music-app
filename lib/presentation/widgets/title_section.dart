@@ -31,7 +31,6 @@ class TitleSection extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.favorite_border)
         ],
       ),
     );

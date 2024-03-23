@@ -1,3 +1,4 @@
+import 'package:demo_music_app/utils/factory_utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class ArtistAlbums extends StatefulWidget {
@@ -8,53 +9,48 @@ class ArtistAlbums extends StatefulWidget {
 }
 
 class _ArtistAlbumsState extends State<ArtistAlbums> {
-  bool expandWidget = false;
   Future<List> futureAlbums = Future.value([]);
+
+  @override
+  void initState() {
+    super.initState();
+    futureAlbums = AlbumsService().getAlbums(widget.id);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        expandWidget
-            ? SizedBox(
-                height: 200,
-                child: FutureBuilder<List>(
-                  future: futureAlbums,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.separated(
-                          itemBuilder: (context, index) {
-                            var albums = snapshot.data![index];
-                            return ListTile(
-                              title: Text(albums.name),
-                              trailing:
-                                  const Icon(Icons.chevron_right_outlined),
-                              subtitle: Text(albums.type),
-                              onTap: () {},
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const Divider(color: Colors.black26);
-                          },
-                          itemCount: snapshot.data!.length);
-                    } else if (snapshot.hasError) {
-                      return Text('${snapshot.error}');
-                    }
+      children: [
+        FutureBuilder<List>(
+          future: futureAlbums,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Wrap(
+                spacing: 8,
+                children: snapshot.data!.map((album) {
+                  return Card(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.network(album.cover),
+                          Text(album.name),
+                          Text(album.artist),
+                          Text('Release date: ${album.releaseDate}')
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              );
+            } else if (snapshot.hasError) {
+              return Text('${snapshot.error}');
+            }
 
-                    return const CircularProgressIndicator();
-                  },
-                ),
-              )
-            : Container(),
-        ElevatedButton(
-            onPressed: () {
-              setState(() {
-                expandWidget = !expandWidget;
-              });
-            },
-            child: const Icon(Icons.close))
+            return const CircularProgressIndicator();
+          },
+        )
       ],
     );
   }

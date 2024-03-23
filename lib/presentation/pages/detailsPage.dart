@@ -11,17 +11,26 @@ class DetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back))
+        ],
+        title: TitleSection(title: selectedItem.name),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             ImageSection(image: selectedItem.image),
-            TitleSection(title: selectedItem.name),
-            ArtistAlbums(id: selectedItem.id),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Back'))
+            const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text('Discography')),
+            Padding(
+                padding: const EdgeInsets.all(8),
+                child: ArtistAlbums(id: selectedItem.id)),
           ],
         ),
       ),

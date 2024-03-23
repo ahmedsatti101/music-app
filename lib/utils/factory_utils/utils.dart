@@ -102,6 +102,7 @@ class ArtistAlbums {
   final String name;
   final String releaseDate;
   final String artist;
+  final String cover;
 
   const ArtistAlbums(
       {required this.artist,
@@ -109,7 +110,8 @@ class ArtistAlbums {
       required this.id,
       required this.name,
       required this.releaseDate,
-      required this.type});
+      required this.type,
+      required this.cover});
 
   factory ArtistAlbums.fromJson(Map<String, dynamic> json) {
     return ArtistAlbums(
@@ -118,7 +120,8 @@ class ArtistAlbums {
         id: json['id'],
         name: json['name'],
         releaseDate: json['release_date'],
-        type: json['type']);
+        type: json['type'],
+        cover: json['cover']);
   }
 }
 
@@ -137,16 +140,8 @@ class SearchService {
         final entry = data['artists']['items'][i];
         var image;
 
-        if (entry['images'].length == 0) {
-          entry['image'] =
-              'https://cdn.iconscout.com/icon/premium/png-256-thumb/music-tune-85-893035.png';
-        } else {
-          for (var j = 0; j < entry['images'].length; j++) {
-            image = entry['images'][j]['url'];
-          }
-        }
-
         entry['artistId'] = entry['id'];
+        image = entry['images'][0]['url'];
         entry['image'] = image;
         entry['type'] = 'Artist';
         list.add(Artists.fromJson(entry));
@@ -233,12 +228,17 @@ class AlbumsService {
 
       for (var i = 0; i < data['items'].length; i++) {
         final entry = data['items'][i];
-        print(entry);
+
+        for (var i = 0; i < entry['artists'].length; i++) {
+          entry['artist'] = entry['artists'][i]['name'];
+        }
+
+        entry['cover'] = entry['images'][1]['url'];
         list.add(ArtistAlbums.fromJson(entry));
       }
       return list;
     } else {
-      throw Exception('Error in utils.dart');
+      throw Exception('Error in AlbumsService');
     }
   }
 }

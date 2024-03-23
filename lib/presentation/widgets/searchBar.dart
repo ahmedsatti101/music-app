@@ -73,6 +73,7 @@ class _SearchBarState extends State<SearchBar> {
                     itemBuilder: (context, index) {
                       var content = snapshot.data![index];
                       return ListTile(
+                        leading: Image.network(content.image),
                         title: Text(content.name),
                         trailing: const Icon(Icons.chevron_right_outlined),
                         subtitle: Text(content.type),
