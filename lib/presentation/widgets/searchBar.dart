@@ -1,13 +1,15 @@
+import 'dart:async';
+import 'package:demo_music_app/utils/factory_utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:demo_music_app/main.dart' as app;
-import 'package:demo_music_app/utils/api.dart' as api;
 import 'package:demo_music_app/presentation/widgets/dropDown.dart'
     as dropDownButton;
+import 'package:demo_music_app/presentation/pages/detailsPage.dart';
 
 class SearchBar extends StatefulWidget {
   final app.MyAppState myAppState;
 
-  const SearchBar({Key? key, required this.myAppState}) : super(key: key);
+  const SearchBar({super.key, required this.myAppState});
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -15,7 +17,7 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   late final TextEditingController _textEditingController;
-
+  Future<List> futureResults = Future.value([]);
   @override
   void initState() {
     super.initState();
@@ -34,10 +36,14 @@ class _SearchBarState extends State<SearchBar> {
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
                 controller: _textEditingController,
-                onChanged: (value) {
-                  widget.myAppState.updateSearchTerm(value);
+                onFieldSubmitted: (value) async {
+                  setState(() {
+                    futureResults = SearchService()
+                        .getResults(value, widget.myAppState.type);
+                  });
                 },
-                decoration: const InputDecoration(labelText: 'Search'),
+                decoration: const InputDecoration(
+                    labelText: 'Search', prefixIcon: Icon(Icons.search)),
               )),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -46,20 +52,55 @@ class _SearchBarState extends State<SearchBar> {
                   onTypeSelected: (selectedType) {
                 widget.myAppState.updateSearchType(selectedType);
               }),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () async {
-                  try {
-                    await api.getAccessToken();
-                    await api.searchApi(
-                        widget.myAppState.query, widget.myAppState.type);
-                  } catch (error) {
-                    print(error);
-                  }
+                onPressed: () {
+                  setState(() {
+                    futureResults = SearchService().getResults(
+                        _textEditingController.text, widget.myAppState.type);
+                  });
                 },
                 child: const Text('Done'),
               ),
             ],
+          ),
+          Expanded(
+            child: FutureBuilder<List>(
+              future: futureResults,
+              builder: (context, AsyncSnapshot<List> snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.separated(
+                    itemBuilder: (context, index) {
+                      var content = snapshot.data![index];
+                      return ListTile(
+                        leading: Image.network(content.image),
+                        title: Text(content.name),
+                        trailing: const Icon(Icons.chevron_right_outlined),
+                        subtitle: Text(content.type),
+                        // subtitle: Text(content.artist != null ? '${content.type} * ${content.artist}' : content.creator != null ? '${content.type} * Owner: ${content.creator}': content.type),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailsPage(selectedItem: content),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider(color: Colors.black26);
+                    },
+                    itemCount: snapshot.data!.length,
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+
+                return const CircularProgressIndicator();
+              },
+            ),
           ),
         ],
       ),
