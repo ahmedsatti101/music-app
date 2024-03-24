@@ -12,13 +12,6 @@ class DetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_back))
-        ],
         title: TitleSection(title: selectedItem.name),
       ),
       body: SingleChildScrollView(
