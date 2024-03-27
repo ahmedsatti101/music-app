@@ -125,6 +125,37 @@ class ArtistAlbums {
   }
 }
 
+class AlbumTracks {
+  final String artist;
+  final String artistId;
+  final int trackNum;
+  final int trackLength;
+  final bool explicit;
+  final String trackId;
+  final String name;
+
+  const AlbumTracks({
+    required this.artist,
+    required this.artistId,
+    required this.trackNum,
+    required this.trackLength,
+    required this.explicit,
+    required this.trackId,
+    required this.name,
+  });
+
+  factory AlbumTracks.fromJson(Map<String, dynamic> json) {
+    return AlbumTracks(
+        artist: json['artist'],
+        artistId: json['artistId'],
+        trackNum: json['track_number'],
+        trackLength: json['duration_ms'],
+        explicit: json['explicit'],
+        trackId: json['id'],
+        name: json['name']);
+  }
+}
+
 class SearchService {
   Future<List> getResults(query, type) async {
     var accessToken = await getAccessToken();
@@ -239,6 +270,35 @@ class AlbumsService {
       return list;
     } else {
       throw Exception('Error in AlbumsService');
+    }
+  }
+}
+
+class AlbumTracksService {
+  Future<List> getAlbumTracks(id) async {
+    var accessToken = await getAccessToken();
+    final response = await http.get(
+        Uri.parse('https://api.spotify.com/v1/albums/$id/tracks'),
+        headers: {'Authorization': 'Bearer $accessToken'});
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      final List<AlbumTracks> list = [];
+
+      for (var i = 0; i < data['items'].length; i++) {
+        final entry = data['items'][i];
+
+        for (var i = 0; i < entry['artists'].length; i++) {
+          entry['artist'] = entry['artists'][i]['name'];
+          entry['artistId'] = entry['artists'][i]['id'];
+        }
+
+        list.add(AlbumTracks.fromJson(entry));
+      }
+
+      return list;
+    } else {
+      throw Exception(response.statusCode);
     }
   }
 }
