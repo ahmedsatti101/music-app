@@ -26,6 +26,7 @@ class _AlbumTracksState extends State<AlbumTracks> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return ListView.separated(
+                  physics: const ClampingScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
