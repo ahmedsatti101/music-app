@@ -1,3 +1,5 @@
+import 'package:demo_music_app/presentation/widgets/music_player.dart';
+import 'package:expandable/expandable.dart';
 import 'package:demo_music_app/utils/factory_utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -39,11 +41,19 @@ class _AlbumTracksState extends State<AlbumTracks> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(content.artist),
-                          if (content.explicit) const Icon(Icons.explicit, size: 20)
+                          if (content.explicit)
+                            const Icon(Icons.explicit, size: 20)
                         ],
                       ),
-                      trailing: Text(
-                          formatDuration(content.trackLength)),
+                      trailing: Text(formatDuration(content.trackLength)),
+                      onTap: () {
+                        _show(content.name
+                        , content.artist);
+                        // Navigator.push(context,
+                        //     MaterialPageRoute(builder: (context) {
+                        //   return Expandables();
+                        // }));
+                      },
                     );
                   },
                   separatorBuilder: (context, index) {
@@ -67,4 +77,20 @@ String formatDuration(int milliseconds) {
   var minutes = duration.inMinutes;
   var seconds = duration.inSeconds.remainder(60);
   return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+}
+
+void _show(name, artist) {
+  ExpandablePanel(
+    collapsed: const Text(
+      'Text',
+      softWrap: true,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    ),
+    expanded: const Text(
+      'Text 2',
+      softWrap: true,
+    ),
+    header: const Text('Text 3'),
+  );
 }

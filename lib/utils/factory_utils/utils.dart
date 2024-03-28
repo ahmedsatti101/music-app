@@ -53,13 +53,15 @@ class Tracks {
   final String artist;
   final String image;
   final String id;
+  final String? url;
 
   const Tracks(
       {required this.image,
       required this.name,
       required this.type,
       required this.artist,
-      required this.id});
+      required this.id,
+      required this.url});
 
   factory Tracks.fromJson(Map<String, dynamic> json) {
     return Tracks(
@@ -67,7 +69,8 @@ class Tracks {
         name: json['name'],
         type: json['type'],
         artist: json['artist'],
-        id: json['trackId']);
+        id: json['trackId'],
+        url: json['preview_url']);
   }
 }
 
@@ -133,6 +136,7 @@ class AlbumTracks {
   final bool explicit;
   final String trackId;
   final String name;
+  final String? url;
 
   const AlbumTracks({
     required this.artist,
@@ -142,17 +146,20 @@ class AlbumTracks {
     required this.explicit,
     required this.trackId,
     required this.name,
+    required this.url
   });
 
   factory AlbumTracks.fromJson(Map<String, dynamic> json) {
     return AlbumTracks(
-        artist: json['artist'],
-        artistId: json['artistId'],
-        trackNum: json['track_number'],
-        trackLength: json['duration_ms'],
-        explicit: json['explicit'],
-        trackId: json['id'],
-        name: json['name']);
+      artist: json['artist'],
+      artistId: json['artistId'],
+      trackNum: json['track_number'],
+      trackLength: json['duration_ms'],
+      explicit: json['explicit'],
+      trackId: json['id'],
+      name: json['name'],
+      url: json['preview_url']
+    );
   }
 }
 
