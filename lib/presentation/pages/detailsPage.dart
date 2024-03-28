@@ -1,6 +1,5 @@
 import 'package:demo_music_app/presentation/widgets/artist_albums.dart';
 import 'package:demo_music_app/presentation/widgets/image_section.dart';
-import 'package:demo_music_app/presentation/widgets/title_section.dart';
 import 'package:flutter/material.dart';
 
 class DetailsPage extends StatelessWidget {
@@ -12,7 +11,7 @@ class DetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TitleSection(title: selectedItem.name),
+        title: Text(selectedItem.name),
       ),
       body: SingleChildScrollView(
         child: Column(
