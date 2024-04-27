@@ -41,8 +41,8 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
       ),
       body: <Widget>[
         const HomePage(),
-        AddToPlaylist(),
-        Library()
+        const AddToPlaylist(),
+        const Library()
       ][currentPageIndex],
     );
   }

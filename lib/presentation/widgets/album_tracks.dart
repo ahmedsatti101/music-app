@@ -1,10 +1,9 @@
-import 'package:demo_music_app/presentation/widgets/music_player.dart';
 import 'package:expandable/expandable.dart';
 import 'package:demo_music_app/utils/factory_utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class AlbumTracks extends StatefulWidget {
-  AlbumTracks({super.key, required this.id});
+  const AlbumTracks({super.key, required this.id});
   final String id;
   @override
   _AlbumTracksState createState() => _AlbumTracksState();
